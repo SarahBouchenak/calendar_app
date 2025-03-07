@@ -3,6 +3,7 @@ import pandas as pd
 import calendar
 import datetime
 import io
+import os
 
 # Ensure tasks_df persists across reruns
 if "tasks_df" not in st.session_state:
@@ -14,6 +15,16 @@ def load_tasks(file):
     df['Start Date'] = df['Start Date'].apply(lambda x: x.date())
     return df
 
+# Load default tasks file if it exists
+# Load default tasks file if it exists
+default_file_path = "tasks.xlsx"
+if os.path.exists(default_file_path):
+    st.session_state.tasks_df = load_tasks(default_file_path)
+    st.sidebar.write("Default tasks loaded successfully!")
+    default_file_loaded = True
+else:
+    default_file_loaded = False
+    
 # Function to generate the calendar
 def generate_calendar(year, month):
     return calendar.monthcalendar(year, month)
