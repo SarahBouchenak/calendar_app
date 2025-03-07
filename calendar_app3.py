@@ -50,7 +50,7 @@ logo_path = "logo.JPEG"
 #     </g>
 # </svg>
 # """
-st.image("generated_3.JPG", use_container_width=True, width = 15)
+st.image("generated_3.jpg", use_container_width=True, width = 15)
 st.write('<p style="font-size: 24px; font-family: Raleway , sans-serif; color: #000; font-weight: bold; text-align: center;">'
         'GUERLAIN SCHEDULER'
         '</p>',
