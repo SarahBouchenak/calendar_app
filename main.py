@@ -33,7 +33,7 @@ logo_path = "logo.JPEG"
 
 st.image("generated_3.jpg", use_container_width=True, width = 15)
 st.write('<p style="font-size: 24px; font-family: Raleway , sans-serif; color: #000; font-weight: bold; text-align: center;">'
-        'GUERLAIN SCHEDULER'
+        'GUERLAIN DATA SCHEDULER'
         '</p>',
         unsafe_allow_html=True
     )
@@ -42,8 +42,15 @@ today = datetime.date.today()
 year = st.sidebar.selectbox("Select Year", range(today.year, today.year + 5), index=0)
 month = st.sidebar.selectbox("Select Month", range(1, 13), index=today.month - 1)
 
-fill_calendar(year, month)
+# generate pages 
+tab1, tab2, tab3 = st.tabs(["CRM Algos", "Retail algos", "GCP Ingestion"])
 
+with tab1:
+    fill_calendar(year, month, 'CRM')
+with tab3: 
+    fill_calendar(year, month, 'INGESTION')
+
+#Download button
 st.write("## Download Tasks")
 excel_data = convert_df_to_excel(st.session_state.tasks_df)
 st.download_button(
