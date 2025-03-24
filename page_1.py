@@ -3,16 +3,14 @@ import pandas as pd
 import calendar
 import datetime
 import io
-    
+
 # Function to generate the calendar
 def generate_calendar(year, month):
     cal = calendar.monthcalendar(year, month)
     return cal
 
-def fill_calendar(year, month, group):
-
+def generate_dates(year, month, group, task_colors):
     st.write(f"### {calendar.month_name[month]} {year}")
-    cal = generate_calendar(year, month)
     # Prepare task data to be displayed on the calendar
     task_dates = []
 
@@ -23,29 +21,26 @@ def fill_calendar(year, month, group):
         start_date = row["Start Date"]
         frequency = row["Frequency (days)"]
         day_of_month = row["Day of Month"]
+        task_name = row["Task"]
+        task_hour = row["Hour"]
         # If the task has a frequency, generate multiple dates
         if pd.notna(frequency):
             current_date = start_date
             while current_date <= datetime.date(year, month, calendar.monthrange(year, month)[1]):
-                #if current_date.year == year and current_date.month == month:
-                task_dates.append((current_date.day, row["Task"]))
+                if current_date.year == year and current_date.month == month:
+                    task_dates.append((current_date.day, task_name, task_hour))
                 current_date += datetime.timedelta(days=frequency)
 
         # If the task is based on a specific day of the month
         if pd.notna(day_of_month):
             if start_date.year < year or (start_date.year == year and start_date.month <= month):
-                task_dates.append((day_of_month, row["Task"]))
-    # Define colors for task bands
-    task_colors = [
-        "#FFCDD2",  # Red
-        "#FFECB3",  # Yellow
-        "#C8E6C9",  # Green
-        "#BBDEFB",  # Blue
-        "#D1C4E9",  # Purple
-        "#FFAB91",  # Orange
-        "#BCAAA4",  # Brown
-    ]
+                task_dates.append((day_of_month, task_name, task_hour))
 
+    return task_dates
+
+def fill_calendar(year, month, group, task_colors):
+    cal = generate_calendar(year, month)
+    task_dates = generate_dates(year, month, group, task_colors)
     # Create HTML for the calendar
     calendar_html = '<table style="width: 100%; border-collapse: collapse;">'
     calendar_html += "<thead><tr>"
@@ -63,11 +58,11 @@ def fill_calendar(year, month, group):
                 calendar_html += '<td style="text-align: center; padding: 5px; border: 1px solid #ddd;"></td>'  # Empty cell for days outside of the current month
             else:
                 # Find tasks for this day
-                tasks_on_day = [task for task_day, task in task_dates if task_day == day]
+                tasks_on_day = [(task_name, task_hour) for task_day, task_name, task_hour in task_dates if task_day == day]
                 task_bands = ""
                 if tasks_on_day:
-                    # Assign colors to each task
-                    task_bands = "<br>".join([f'<div style="background-color: {task_colors[i % len(task_colors)]}; padding: 2px; border-radius: 5px; margin: 2px 0;">{task}</div>' for i, task in enumerate(tasks_on_day)])
+                    # Assign colors to each task and add tooltip with task name and hour
+                    task_bands = "<br>".join([f'<div title="at {task_hour}" style="background-color: {task_colors[i % len(task_colors)]}; padding: 2px; border-radius: 5px; margin: 2px 0;">{task_name}</div>' for i, (task_name, task_hour) in enumerate(tasks_on_day)])
                 calendar_html += f'<td style="text-align: center; padding: 5px; border: 1px solid #ddd; height: 100px; vertical-align: top;"><div style="height: 20px;"><strong>{day}</strong></div><div>{task_bands}</div></td>'
         calendar_html += "</tr>"
 

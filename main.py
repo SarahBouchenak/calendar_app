@@ -31,7 +31,7 @@ else:
 # Streamlit app
 logo_path = "logo.JPEG"
 
-st.image("generated_3.jpg", use_container_width=True, width = 15)
+#st.image("generated_3.jpg", use_container_width=True, width = 15)
 st.write('<p style="font-size: 24px; font-family: Raleway , sans-serif; color: #000; font-weight: bold; text-align: center;">'
         'GUERLAIN DATA SCHEDULER'
         '</p>',
@@ -42,13 +42,24 @@ today = datetime.date.today()
 year = st.sidebar.selectbox("Select Year", range(today.year, today.year + 5), index=0)
 month = st.sidebar.selectbox("Select Month", range(1, 13), index=today.month - 1)
 
+ # Define colors for task bands
+task_colors = [
+        "#FFCDD2",  # Red
+        "#FFECB3",  # Yellow
+        "#C8E6C9",  # Green
+        "#BBDEFB",  # Blue
+        "#D1C4E9",  # Purple
+        "#FFAB91",  # Orange
+        "#BCAAA4",  # Brown
+    ]
+
 # generate pages 
 tab1, tab2, tab3 = st.tabs(["CRM Algos", "Retail algos", "GCP Ingestion"])
 
 with tab1:
-    fill_calendar(year, month, 'CRM')
+    fill_calendar(year, month, 'CRM', task_colors)
 with tab3: 
-    fill_calendar(year, month, 'INGESTION')
+    fill_calendar(year, month, 'INGESTION', task_colors)
 
 #Download button
 st.write("## Download Tasks")
